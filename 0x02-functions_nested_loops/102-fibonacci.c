@@ -6,6 +6,7 @@
 *
 * Return: Always 0.
 */
+
 int main(void)
 {
 long int n1 = 0, n2 = 1, n3, i;
