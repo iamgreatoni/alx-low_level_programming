@@ -1,23 +1,26 @@
 #include <stdio.h>
-
 /**
-* main - Prints natural numbers below 1024 that are
-* multiplies of 3 or 5
-*
-* Return: Always 0.
-*/
-
+ * main - print the first 50 fibonacci number
+ * Return: no return
+ */
 int main(void)
 {
-long int n1 = 0, n2 = 1, n3, i;
-for (i = 2; i <= 51; ++i)
-{
-n3 = n1 + n2;
-printf("%ld", n3);
-if (i < 51)
-printf(", ");
-n1 = n2;
-n2 = n3;
-}
-return (0);
+	long int a = 1;
+	long int b = 2;
+	long int f;
+	int i;
+
+	printf("%ld, %ld, ", a, b);
+	for (i = 0; i <= 47; i++)
+	{
+		f = a + b;
+		a = b;
+		b = f;
+		if (i == 47)
+			printf("%ld", f);
+		else
+			printf("%ld, ", f);
+	}
+	printf("\n");
+	return (0);
 }
