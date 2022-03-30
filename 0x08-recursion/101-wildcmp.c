@@ -1,4 +1,6 @@
 #include "main.h"
+#include <stdio.h>
+
 
 int cmp(char *c1, char *c2);
 
