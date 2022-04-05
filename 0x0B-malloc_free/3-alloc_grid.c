@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include "main.h"
 #include <stdlib.h>
 
 /**
@@ -7,39 +7,31 @@
  * @height: rows
  * Return: a pointer to a 2 dimensional array of integers
  */
-
 int **alloc_grid(int width, int height)
 {
-	int **grid, row, col;
+	int **grid, i;
 
-	if (width < 1 || height < 1)
+	if (width <= 0 || height <= 0)
 		return (NULL);
 
-	grid = (int **)malloc(height * sizeof(int *));
+	grid =  (int **) malloc(height * sizeof(int *));
 
-	if (!grid)
-	{
-		free(grid);
+	if (grid == NULL)
 		return (NULL);
-	}
 
-	for (row = 0; row < height; row++)
+	for (i = 0; i < height; i++)
 	{
-		grid[row] = (int *)malloc(width * sizeof(int));
-
-		if (!grid[row])
+		grid[i] = malloc(width * sizeof(int));
+		if (grid[i] == NULL)
 		{
-			while (row)
+			while (i >= 0)
 			{
-				free(grid[row]);
-				row--;
+				free(grid[i]);
+				i--;
 			}
 			free(grid);
 			return (NULL);
 		}
-		for (col = 0; col < width; col++)
-			grid[row][col] = 0;
 	}
-
 	return (grid);
 }
