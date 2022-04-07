@@ -1,126 +1,186 @@
 #include "main.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <ctype.h>
-
+int _isdigit(int c);
+char *infinite_add(char *n1, char *n2, char *r, int size_r);
+char *add_zero(char *sum, int num);
 /**
- * _is_zero - determines if any number is zero
- * @argv: argument vector.
- *
- * Return: no return.
- */
-void _is_zero(char *argv[])
-{
-	int i, isn1 = 1, isn2 = 1;
-
-	for (i = 0; argv[1][i]; i++)
-		if (argv[1][i] != '0')
-		{
-			isn1 = 0;
-			break;
-		}
-
-	for (i = 0; argv[2][i]; i++)
-		if (argv[2][i] != '0')
-		{
-			isn2 = 0;
-			break;
-		}
-
-	if (isn1 == 1 || isn2 == 1)
-	{
-		printf("0\n");
-		exit(0);
-	}
-}
-
-/**
- * _initialize_array - set memery to zero in a new array
- * @ar: char array.
- * @lar: length of the char array.
- *
- * Return: pointer of a char array.
- */
-char *_initialize_array(char *ar, int lar)
-{
-	int i = 0;
-
-	for (i = 0; i < lar; i++)
-		ar[i] = '0';
-	ar[lar] = '\0';
-	return (ar);
-}
-
-/**
- * _checknum - determines length of the number
- * and checks if number is in base 10.
- * @argv: arguments vector.
- * @n: row of the array.
- *
- * Return: length of the number.
- */
-int _checknum(char *argv[], int n)
-{
-	int ln;
-
-	for (ln = 0; argv[n][ln]; ln++)
-		if (!isdigit(argv[n][ln]))
-		{
-			printf("Error\n");
-			exit(98);
-		}
-
-	return (ln);
-}
-
-/**
- * main - Entry point.
- * program that multiplies two positive numbers.
- * @argc: number of arguments.
- * @argv: arguments vector.
- *
- * Return: 0 - success.
+ * main - write a program that multiplies positive numbers
+ * @argc: the number of argument passed
+ * @argv: a pointer array which points to each argument passed to the program
+ * Return: return 0
  */
 int main(int argc, char *argv[])
 {
-	int ln1, ln2, lnout, add, addl, i, j, k, ca;
-	char *nout;
-
-	if (argc != 3)
-		printf("Error\n"), exit(98);
-	ln1 = _checknum(argv, 1), ln2 = _checknum(argv, 2);
-	_is_zero(argv), lnout = ln1 + ln2, nout = malloc(lnout + 1);
-	if (nout == NULL)
-		printf("Error\n"), exit(98);
-	nout = _initialize_array(nout, lnout);
-	k = lnout - 1, i = ln1 - 1, j = ln2 - 1, ca = addl = 0;
-	for (; k >= 0; k--, i--)
+	int i, j, k, h, p, n, flag = 0, num2 = 0, len1 = 0, len2 = 0;
+	char *mul;
+	char *num1;
+	/* if not two numbers, exit */
+	if (argc - 1 != 2)
 	{
-		if (i < 0)
+		printf("Error\n");
+		exit(98);
+	}
+	/* find len of two number */
+	/* print error if not compose by digits */
+	for (i = 1; i < argc; i++)
+	{
+		for (j = 0; argv[i][j] != '\0'; j++)
 		{
-			if (addl > 0)
+			if (!_isdigit(argv[i][j]))
 			{
-				add = (nout[k] - '0') + addl;
-				if (add > 9)
-					nout[k - 1] = (add / 10) + '0';
-				nout[k] = (add % 10) + '0';
+				printf("Error\n");
+				exit(98);
 			}
-			i = ln1 - 1, j--, addl = 0, ca++, k = lnout - (1 + ca);
-		}
-		if (j < 0)
-		{
-			if (nout[0] != '0')
-				break;
-			lnout--;
-			free(nout), nout = malloc(lnout + 1), nout = _initialize_array(nout, lnout);
-			k = lnout - 1, i = ln1 - 1, j = ln2 - 1, ca = addl = 0;
-		}
-		if (j >= 0)
-		{
-			add = ((argv[1][i] - '0') * (argv[2][j] - '0')) + (nout[k] - '0') + addl;
-			addl = add / 10, nout[k] = (add % 10) + '0';
+			if (i == 1)
+				len1++;
+			else if (i == 2)
+				len2++;
 		}
 	}
-	printf("%s\n", nout);
+	/* allocate space for mul and num */
+	mul = malloc(sizeof(char) * (len1 + len2 + 1));
+	if (mul == NULL)
+		exit(98);
+	num1 = malloc(sizeof(char) * (len1 + len2 + 1));
+	if (num1 == NULL)
+		exit(98);
+	/* use infinite_add function to add number */
+	for (k = 0; argv[2][k] != '\0'; k++)
+	{
+		/* num2 is the current digit of number 2 */
+		num2 = argv[2][k] - '0';
+		/* init num1, make it equal 0 */
+		num1 = infinite_add("0", "0", num1, len1 + len2 + 1);
+		/* use add instead of mul to multiplies two number */
+		/* keep adding num1 (number 1) by num2 times (by using loop) */
+		for (h = 0; h < num2; h++)
+		{
+			num1 = infinite_add(num1, argv[1], num1, len1 +
+					    len2 + 1);
+		}
+		/* add zero at the end of string num1 */
+		num1 = add_zero(num1, len2 - k - 1);
+		/* add the result of num1 to get the final result */
+		mul = infinite_add(mul, num1, mul, len1 + len2 + 1);
+	}
+	/* remove leading zero */
+	for (p = 0; mul[p] != '\0'; p++)
+	{
+		if (mul[p] != '0')
+		{
+			for (n = 0; mul[p] != '\0'; n++)
+			{
+				mul[n] = mul[p];
+				p++;
+				flag = 1;
+			}
+		}
+		else if (mul[p] == '0' && flag == 0)
+		{
+			mul[0] = '0';
+			n = 1;
+		}
+	}
+	/* add '\0' at the end of string mul */
+	mul[n] = '\0';
+	printf("%s\n", mul);
 	return (0);
+}
+/**
+ * add_zero - add zero at the end of string
+ * @num: number of zero need to add
+ * @sum: the string that need to add zero
+ * Return: return a pointer of string that contain zero
+ */
+char *add_zero(char *sum, int num)
+{
+	int len = 0, i = 0;
+	/* find len of sum */
+	while (sum[len] != '\0')
+		len++;
+	/* add num zeros to the end of sum by looping num times */
+	for (i = len; i < len + num; i++)
+	{
+		sum[i] = '0';
+	}
+	sum[i] = '\0';
+	return (sum);
+}
+
+/**
+ * _isdigit - check for a digit (0 to 9)
+ * @c: the number to be checked
+ * Return: return 1 if c is a digit. otherwise, return 0
+ */
+int _isdigit(int c)
+{
+	if (c >= 48 && c <= 57)
+		return (1);
+	else
+		return (0);
+}
+/**
+ * infinite_add - adds two numbers
+ * @n1: number that need to add
+ * @n2: number that need to add
+ * @r: buffer that the function will use to store the result
+ * @size_r: the buffer size
+ * Return: return the sum (r)
+ */
+char *infinite_add(char *n1, char *n2, char *r, int size_r)
+{
+	int len, len1 = 0, len2 = 0, i, j;
+	int overflow = 0, a1, a2, sum = 0, sum1 = 0;
+
+	while (n1[len1++] != '\0')
+		;
+	while (n2[len2++] != '\0')
+		;
+	if (len1-- >= len2--)
+		len = len1;
+	else
+		len = len2;
+	for (i = len; i >= 0; i--)
+	{
+		a1 = n1[len1 - 1] - '0';
+		a2 = n2[len2 - 1] - '0';
+		if (len1 >= 1)
+			len1--;
+		else
+			a1 = 0;
+		if (len2 >= 1)
+			len2--;
+		else
+			a2 = 0;
+		sum = overflow + a1 + a2;
+		if (sum > 9)
+		{
+			sum1 = sum % 10;
+			r[i] = sum1 + '0';
+			overflow = 1;
+		}
+		else
+		{
+			r[i] = sum + '0';
+			overflow = 0;
+		}
+	}
+	if (r[0] == '0')
+	{
+		if (len + 1 >= size_r && len >= size_r)
+			return (0);
+		for (j = 0; j <= len; j++)
+		{
+			r[j] = r[j + 1];
+		}
+		r[len] = '\0';
+	}
+	else
+	{
+		if (len + 1 >= size_r)
+			return (0);
+		r[len + 1] = '\0';
+	}
+	return (r);
 }
